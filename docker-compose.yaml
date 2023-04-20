@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  quotes-database:
+    container_name: kodilla-quotes
+    image: postgres
+    restart: always
+    env_file:
+        - ./env/database.env
+    ports:
+        - '5432:5432'
+    volumes:
+        - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+  backend:
+    container_name: quotes-backend
+    build:
+      context: ./backend
+      #dockefile: Dockerfile
+    restart: always
+    env_file:
+      - ./env/backend.env
+    ports:
+        - '8080:8080'
+    depends_on:
+      - quotes-database
+  frontend:
+    container_name: quotes-frontend
+    build:
+      context: ./frontend
+        #dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+   
